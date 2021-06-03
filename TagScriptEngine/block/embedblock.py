@@ -85,7 +85,8 @@ class EmbedBlock(Block):
         {embed(title):my embed title}
     """
 
-    ALLOWED_ATTRIBUTES = ("description", "title", "color", "colour", "url")
+    ALLOWED_ATTRIBUTES = ("description", "title", "color", "colour", "url",
+        "thumbnail", "image")
 
     def will_accept(self, ctx: Context) -> bool:
         dec = ctx.verb.declaration.lower()
@@ -138,7 +139,16 @@ class EmbedBlock(Block):
     def update_embed(embed: Embed, attribute: str, value: str) -> Embed:
         if attribute in ("color", "colour"):
             value = string_to_color(value)
-        setattr(embed, attribute, value)
+        if attribute in ("thumbnail", "image"):
+            try:
+                if attribute == "thumbnail":
+                    embed.set_thumbnail(url=value)
+                if attribute == "image":
+                    embed.set_image(url=value)
+            except:
+                pass
+        else:
+            setattr(embed, attribute, value)
         return embed
 
     @staticmethod
