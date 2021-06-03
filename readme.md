@@ -2,7 +2,7 @@
 
 This repository is a fork of phenom4n4n's [TagScript](https://github.com/phenom4n4n/TagScript) which is a fork of JonSnowbd's [TagScript](https://github.com/JonSnowbd/TagScript).
 
-This fork adds stuff or adjust certain stuff for my discord bot Z3R0 (ziBot).
+This fork adds stuff or adjust certain stuff for my discord bot Z3R0 (ziBot). For general usage please use phenom4n4n's [TagScript](https://github.com/phenom4n4n/TagScript) instead!
 
 ## Installation
 
