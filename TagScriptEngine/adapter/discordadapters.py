@@ -186,8 +186,18 @@ class GuildAdapter(AttributeAdapter):
         The number of humans in the server.
     description
         The server's description if one is set, or "No description".
+    channels
+        The number of channels in the server.
+    roles
+        The number of roles in the server.
+    owner
+        The server's owner.
     random
         A random member from the server.
+    randomonline
+        A random online member from the server.
+    randomoffline
+        A random offline member from the server.
     """
 
     def update_attributes(self):
@@ -208,7 +218,6 @@ class GuildAdapter(AttributeAdapter):
             "channels": len(guild.channels),
             "roles": len(guild.roles),
             "owner": guild.owner,
-            "created_at": guild.created_at,
         }
         self._attributes.update(additional_attributes)
 
