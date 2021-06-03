@@ -116,15 +116,21 @@ class EmbedBlock(Block):
         if data.get("timestamp"):
             data["timestamp"] = data["timestamp"].strip("Z")
 
+        thumbnail = data.pop("thumbnail", None)
+        image = data.pop("image", None)
         color = data.pop("color", data.pop("colour", None))
 
         try:
-            embed = Embed.from_dict(data)
+            embed: Embed = Embed.from_dict(data)
         except Exception as error:
             raise EmbedParseError(error) from error
         else:
             if color := self.value_to_color(color):
                 embed.color = color
+            if thumbnail:
+                embed.set_thumbnail(url=thumbnail)
+            if image:
+                embed.set_image(url=image)
             return embed
 
     @staticmethod
