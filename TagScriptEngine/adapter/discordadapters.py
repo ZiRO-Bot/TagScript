@@ -191,7 +191,7 @@ class GuildAdapter(AttributeAdapter):
     """
 
     def update_attributes(self):
-        guild = self.object
+        guild: Guild = self.object
         bots = 0
         humans = 0
         for m in guild.members:
@@ -205,12 +205,33 @@ class GuildAdapter(AttributeAdapter):
             "bots": bots,
             "humans": humans,
             "description": guild.description or "No description.",
+            "channels": guild.channels,
         }
         self._attributes.update(additional_attributes)
 
     def update_methods(self):
-        additional_methods = {"random": self.random_member}
+        additional_methods = {
+            "random": self.random_member,
+            "randomonline": self.random_online_member,
+            "randomoffline": self.random_offline_member,
+        }
         self._methods.update(additional_methods)
+    def get_member_list(self, status: str = None):
+        if not status:
+            member_list = self.object.members
+        else:
+            member_list = [m for m in self.object.members if str(m.status) == status]
+        
+        return member_list
 
     def random_member(self):
-        return choice(self.object.members)
+        members = self.get_member_list()
+        return choice(members)
+    def random_online_member(self):
+        members = self.get_member_list("online")
+        return choice(members)
+
+    def random_offline_member(self):
+        members = self.get_member_list("offline")
+        return choice(members)
+
