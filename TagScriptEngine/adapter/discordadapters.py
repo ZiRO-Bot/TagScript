@@ -205,7 +205,10 @@ class GuildAdapter(AttributeAdapter):
             "bots": bots,
             "humans": humans,
             "description": guild.description or "No description.",
-            "channels": guild.channels,
+            "channels": len(guild.channels),
+            "roles": len(guild.roles),
+            "owner": guild.owner,
+            "created_at": guild.created_at,
         }
         self._attributes.update(additional_attributes)
 
