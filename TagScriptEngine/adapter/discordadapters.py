@@ -1,4 +1,5 @@
 from random import choice
+from typing import Optional
 
 from discord import Guild, Member, TextChannel
 
@@ -36,7 +37,7 @@ class AttributeAdapter(Adapter):
     def update_methods(self):
         pass
 
-    def get_value(self, ctx: Verb) -> str:
+    def get_value(self, ctx: Verb) -> Optional[str]:
         should_escape = False
 
         if ctx.parameter is None:
@@ -99,15 +100,16 @@ class MemberAdapter(AttributeAdapter):
     """
 
     def update_attributes(self):
+        member: Member = self.object
         additional_attributes = {
-            "color": self.object.color,
-            "colour": self.object.color,
-            "nick": self.object.display_name,
-            "avatar": (self.object.avatar_url, False),
-            "discriminator": self.object.discriminator,
-            "joined_at": getattr(self.object, "joined_at", self.object.created_at),
-            "mention": self.object.mention,
-            "bot": self.object.bot,
+            "color": member.colour,
+            "colour": member.colour,
+            "nick": member.display_name,
+            "avatar": (member.avatar.url, False),
+            "discriminator": member.discriminator,
+            "joined_at": getattr(member, "joined_at", member.created_at),
+            "mention": member.mention,
+            "bot": member.bot,
         }
         self._attributes.update(additional_attributes)
 
@@ -210,7 +212,7 @@ class GuildAdapter(AttributeAdapter):
             else:
                 humans += 1
         additional_attributes = {
-            "icon": (guild.icon_url, False),
+            "icon": (guild.icon.url, False),
             "member_count": guild.member_count,
             "bots": bots,
             "humans": humans,
@@ -228,17 +230,19 @@ class GuildAdapter(AttributeAdapter):
             "randomoffline": self.random_offline_member,
         }
         self._methods.update(additional_methods)
+
     def get_member_list(self, status: str = None):
         if not status:
             member_list = self.object.members
         else:
             member_list = [m for m in self.object.members if str(m.status) == status]
-        
+
         return member_list
 
     def random_member(self):
         members = self.get_member_list()
         return choice(members)
+
     def random_online_member(self):
         members = self.get_member_list("online")
         return choice(members)
@@ -246,4 +250,3 @@ class GuildAdapter(AttributeAdapter):
     def random_offline_member(self):
         members = self.get_member_list("offline")
         return choice(members)
-
