@@ -1,4 +1,7 @@
-from appJar import gui
+import gi
+
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk  # noqa # That just how GTK for py works apparently
 
 from TagScriptEngine import Interpreter, adapter, block
 
@@ -17,20 +20,37 @@ blocks = [
     block.ShortCutRedirectBlock("message"),
     block.LooseVariableGetterBlock(),
     block.SubstringBlock(),
+    block.EmbedBlock()
 ]
 x = Interpreter(blocks)
 
 
-def press(button):
-    o = x.process(app.getTextArea("input")).body
-    app.clearTextArea("output")
-    app.setTextArea("output", o)
+class Playground(Gtk.Window):
+    def __init__(self):
+        super().__init__(title="TSE Playground")
+
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self.add(vbox)
+
+        self.input = Gtk.Entry()
+        self.input.set_placeholder_text("Input goes here!")
+        self.input.set_text('{embed({"title": "Hello World!"})}')
+        vbox.pack_start(self.input, True, True, 0)
+
+        self.output = Gtk.Entry()
+        self.output.set_editable(False)
+        vbox.pack_start(self.output, True, True, 0)
+
+        self.process_button = Gtk.Button(label="Process")
+        self.process_button.connect("clicked", self.do_process)
+        vbox.pack_start(self.process_button, True, True, 0)
+
+    def do_process(self, widget):
+        o = x.process(self.input.get_text()).body
+        self.output.set_text(o)
 
 
-app = gui("TSE Playground", "750x450")
-app.setPadding([2, 2])
-app.setInPadding([2, 2])
-app.addTextArea("input", text="I see {rand:1,2,3,4} new items!", row=0, column=0)
-app.addTextArea("output", text="Press process to continue", row=0, column=1)
-app.addButton("process", press, row=1, column=0, colspan=2)
-app.go()
+win = Playground()
+win.connect("destroy", Gtk.main_quit)
+win.show_all()
+Gtk.main()
