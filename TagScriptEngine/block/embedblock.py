@@ -27,6 +27,16 @@ def string_to_color(argument: str) -> Colour:
         return method()
 
 
+def set_url(embed: Embed, attribute: str, url: str) -> None:
+    method = getattr(embed, f"set_{attribute}")
+    method(url=url)
+
+
+def set_colour(embed: Embed, attribute: str, _colour: str) -> None:
+    colour: Colour = string_to_color(_colour)
+    setattr(embed, attribute, colour)
+
+
 class EmbedBlock(Block):
     """
     An embed block will send an embed in the tag response.
@@ -85,12 +95,21 @@ class EmbedBlock(Block):
         {embed(title):my embed title}
     """
 
-    ALLOWED_ATTRIBUTES = ("description", "title", "color", "colour", "url",
-        "thumbnail", "image")
+    ATTRIBUTE_HANDLERS = {
+        "description": setattr,
+        "title": setattr,
+        "color": set_colour,
+        "colour": set_colour,
+        "url": setattr,
+        "thumbnail": set_url,
+        "image": set_url,
+    }
 
     def will_accept(self, ctx: Context) -> bool:
-        dec = ctx.verb.declaration.lower()
-        return dec == "embed"
+        dec = ctx.verb.declaration
+        if dec:
+            return dec.lower() == "embed"
+        return False
 
     @staticmethod
     def get_embed(ctx: Context) -> Embed:
@@ -135,20 +154,14 @@ class EmbedBlock(Block):
                 embed.set_image(url=image)
             return embed
 
-    @staticmethod
-    def update_embed(embed: Embed, attribute: str, value: str) -> Embed:
-        if attribute in ("color", "colour"):
-            value = string_to_color(value)
-        if attribute in ("thumbnail", "image"):
-            try:
-                if attribute == "thumbnail":
-                    embed.set_thumbnail(url=value)
-                if attribute == "image":
-                    embed.set_image(url=value)
-            except:
-                pass
+    @classmethod
+    def update_embed(cls, embed: Embed, attribute: str, value: str) -> Embed:
+        try:
+            handler = cls.ATTRIBUTE_HANDLERS[attribute]
+        except KeyError:
+            return embed
         else:
-            setattr(embed, attribute, value)
+            handler(embed, attribute, value)
         return embed
 
     @staticmethod
@@ -173,8 +186,8 @@ class EmbedBlock(Block):
         lowered = ctx.verb.parameter.lower()
         try:
             if ctx.verb.parameter.startswith("{") and ctx.verb.parameter.endswith("}"):
-                    embed = self.text_to_embed(ctx.verb.parameter)
-            elif lowered in self.ALLOWED_ATTRIBUTES and ctx.verb.payload:
+                embed = self.text_to_embed(ctx.verb.parameter)
+            elif lowered in self.ATTRIBUTE_HANDLERS and ctx.verb.payload:
                 embed = self.get_embed(ctx)
                 embed = self.update_embed(embed, lowered, ctx.verb.payload)
             else:

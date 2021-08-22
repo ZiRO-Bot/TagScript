@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime as dt
 from typing import Optional
 
 from ..interface import Block
@@ -16,14 +16,16 @@ class StrfBlock(Block):
         if ctx.verb.parameter:
             if ctx.verb.parameter.isdigit():
                 try:
-                    t = datetime.fromtimestamp(int(ctx.verb.parameter))
-                except:
+                    t = dt.datetime.fromtimestamp(int(ctx.verb.parameter))
+                except Exception:
                     return
             else:
                 try:
-                    t = datetime.strptime(ctx.verb.parameter, "%Y-%m-%d %H.%M.%S")
+                    t = dt.datetime.strptime(ctx.verb.parameter, "%Y-%m-%d %H.%M.%S")
                 except ValueError:
                     return
         else:
-            t = datetime.utcnow()
+            t = dt.datetime.now(tz=dt.timezone.utc)
+        if not t.tzinfo:
+            t.replace(tzinfo=dt.timezone.utc)
         return t.strftime(ctx.verb.payload)
