@@ -1,10 +1,9 @@
 from distutils.core import setup
 import re
 
-VERSION_RE = re.compile(r"__version__\s*=\s*\"(\d+\.\d+\.\d+)\"")
+with open("./TagScriptEngine/__init__.py", "r") as f:
+    match = re.search(r'^__version__\s*=\s*[\'\"]([^\']*)[\'\"]', f.read(), re.MULTILINE)
 
-with open("./TagScriptEngine/__init__.py", "r") as init:
-    match = VERSION_RE.search(init.read())
 if not match:
     raise RuntimeError("failed to find version info")
 version = match.group(1)
