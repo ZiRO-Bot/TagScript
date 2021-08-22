@@ -42,4 +42,4 @@ on one of the biggest bots on discord!
 
 `PyParsing` provides the math block with intelligent mathematical expressions
 
-`appJar` is required if one wants to use the playground feature
+`PyGObject` is required if one wants to use the playground feature
