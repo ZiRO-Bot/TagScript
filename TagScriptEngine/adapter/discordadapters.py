@@ -18,10 +18,11 @@ __all__ = (
 class AttributeAdapter(Adapter):
     def __init__(self, base):
         self.object = base
+        created_at = getattr(base, "created_at", None)
         self._attributes = {
             "id": base.id,
-            "created_at": base.created_at,
-            "timestamp": int(base.created_at.timestamp()),
+            "created_at": created_at or "N/A",
+            "timestamp": int(created_at.timestamp() if created_at else 0),
             "name": getattr(base, "name", str(base)),
         }
         self._methods = {}
