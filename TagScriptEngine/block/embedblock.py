@@ -27,11 +27,6 @@ def string_to_color(argument: str) -> Colour:
         return method()
 
 
-def set_url(embed: Embed, attribute: str, url: str) -> None:
-    method = getattr(embed, f"set_{attribute}")
-    method(url=url)
-
-
 def set_colour(embed: Embed, attribute: str, _colour: str) -> None:
     colour: Colour = string_to_color(_colour)
     setattr(embed, attribute, colour)
@@ -101,8 +96,8 @@ class EmbedBlock(Block):
         "color": set_colour,
         "colour": set_colour,
         "url": setattr,
-        "thumbnail": set_url,
-        "image": set_url,
+        "thumbnail": setattr,
+        "image": setattr,
     }
 
     def will_accept(self, ctx: Context) -> bool:

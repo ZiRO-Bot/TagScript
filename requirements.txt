@@ -1,5 +1,5 @@
 black
 isort
 autoflake
-discord.py>=2.0.0
+git+https://github.com/iDevision/enhanced-discord.py@6f5614373a3c178c82d5145205dbc7427bcdd7d0
 pyparsing
