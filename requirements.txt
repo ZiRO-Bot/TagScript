@@ -1,5 +1,5 @@
 black
 isort
 autoflake
-git+https://github.com/ZiRO-Bot/enhanced-discord.py@2367d9d7e2d9fec871e34c5b0f3b88f717060974
+git+https://github.com/iDevision/enhanced-discord.py@152b61aabb33bb13dae54a3f63e4e97aae81aa6e
 pyparsing
